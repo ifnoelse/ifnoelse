@@ -1,8 +1,6 @@
 package com.ifnoelse.common;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 public class Conf {
@@ -10,11 +8,20 @@ public class Conf {
 
     static {
         p = new Properties();
+        Reader reader = null;
         try {
-            String path = Thread.currentThread().getContextClassLoader().getResource("conf.properties").getPath();
-            p.load(new FileReader(path));
+            reader = new InputStreamReader(Conf.class.getClassLoader().getResourceAsStream("conf.properties"), "utf-8");
+            p.load(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
