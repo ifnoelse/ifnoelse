@@ -1,6 +1,7 @@
 package com.ifnoelse.common;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 import java.util.*;
@@ -54,13 +55,71 @@ public class FuncUtil {
         return reduce(init, Array2Iterable.convert(arr), func);
     }
 
-    public static <R, E> Map<R, List<E>> group(Iterable<E> iterable, Func1<R, E> func) {
-        return group(iterable, func, x -> {
+    public static <R, E> List<R> map(Iterable<E> iterable, Func1<R, E> func) {
+        return reduce(new ArrayList<R>(), iterable, (list, e) -> {
+            list.add(func.todo(e));
+            return list;
+        });
+    }
+
+    public static <E> List<E> flatMap(Collection colls){
+        List<E> list = new ArrayList<>();
+        for (Object obj:colls){
+            if(obj instanceof Collection){
+                list.addAll(flatMap((Collection) obj));
+            }else {
+                list.add((E) obj);
+            }
+        }
+        return list;
+    }
+
+    public static <E> List<E> filter(Iterable<E> iterable, Func1<Boolean, E> func) {
+        return reduce(new ArrayList<E>(), iterable, (list, e) -> {
+            if (func.todo(e)) {
+                list.add(e);
+            }
+            return list;
+        });
+    }
+
+    public static <E> Iterable<E> filter$(Iterable<E> iterable, Func1<Boolean, E> func) {
+        Iterator<E> iterator = iterable.iterator();
+        while (iterator.hasNext()){
+            E e = iterator.next();
+            if(!func.todo(e))
+                iterator.remove();
+        }
+        return iterable;
+    }
+
+    public static <K, V> Map<K, V> filter(Map<K, V> map, Func2<Boolean, K, V> func) {
+        return reduce(new HashMap<K, V>(), map.entrySet(), (m, e) -> {
+            if (func.todo(e.getKey(), e.getValue())) {
+                m.put(e.getKey(), e.getValue());
+            }
+            return m;
+        });
+    }
+
+
+    public static <E> Set<E> filter(Set<E> set, Func1<Boolean, E> func) {
+        return reduce(new HashSet<E>(), set, (s, e) -> {
+            if (func.todo(e))
+                s.add(e);
+            return s;
+        });
+    }
+
+
+    public static <R, E> Map<R, List<E>> groupBy(Iterable<E> iterable, Func1<R, E> func) {
+        return groupBy(iterable, func, x -> {
             return x;
         });
     }
 
-    public static <R, E, T> Map<R, List<T>> group(Iterable<E> iterable, Func1<R, E> keymapper, Func1<T, E> convertor) {
+
+    public static <R, E, T> Map<R, List<T>> groupBy(Iterable<E> iterable, Func1<R, E> keymapper, Func1<T, E> convertor) {
         Map<R, List<T>> res = new HashMap<>();
         reduce(res, iterable, (m, e) -> {
             R r = keymapper.todo(e);
@@ -72,30 +131,16 @@ public class FuncUtil {
         return res;
     }
 
-    public static <R, E, T> Map<R, List<T>> group(E[] arr, Func1<R, E> func, Func1<T, E> convertor) {
-        return group(Array2Iterable.convert(arr), func, convertor);
+    public static <R, E, T> Map<R, List<T>> groupBy(E[] arr, Func1<R, E> keymapper, Func1<T, E> convertor) {
+        return groupBy(Array2Iterable.convert(arr), keymapper, convertor);
     }
 
-    public static <R, E> Map<R, List<E>> group(E[] arr, Func1<R, E> func) {
+    public static <R, E> Map<R, List<E>> groupBy(E[] arr, Func1<R, E> keymapper) {
 
-        return group(Array2Iterable.convert(arr), func);
+        return groupBy(Array2Iterable.convert(arr), keymapper);
     }
 
     public static void main(String[] args) {
 
-
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(i + 1);
-        }
-
-        System.out.println(reduce(0, new Integer[]{1, 23}, (init, e) -> {
-            return init + e;
-        }));
-        System.out.println(group("a b c".split(" "), in -> {
-            return in;
-        }, x -> {
-            return x.toUpperCase();
-        }));
     }
 }
