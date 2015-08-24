@@ -1,10 +1,5 @@
 package com.ifnoelse.common;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import java.util.*;
 
 /**
@@ -43,6 +38,9 @@ public class FuncUtil {
     public interface Func$2<R, A, B> {
         public R todo(A a, B b);
     }
+    public interface Func$3<R, A, B,C> {
+        public R todo(A a, B b,C c);
+    }
 
     public static <R, E> R reduce(R init, Iterable<E> iterable, Func$2<R, R, E> func) {
         R r = init;
@@ -77,6 +75,14 @@ public class FuncUtil {
     }
 
 
+    /**
+     * 将嵌套集合中的所有元素放入一个list中返回
+     * @param colls
+     * @param func 处理每个元素的方法，元素被放入list之间会调用该方法，并将返回值放入list
+     * @param <R>
+     * @param <E>
+     * @return
+     */
     public static <R, E> List<R> flatMap(Collection colls, Func$1<R, E> func) {
         List<R> list = new ArrayList<>();
         for (Object obj : colls) {
@@ -89,6 +95,12 @@ public class FuncUtil {
         return list;
     }
 
+    /**
+     * 生成嵌套集合的代理迭代器，通过该迭代器可以遍历嵌套集合中的所有元素
+     * @param iterables
+     * @param <E>
+     * @return
+     */
     public static <E> Iterable<E> flat(Iterable iterables) {
 
         return new Iterable<E>() {
@@ -265,6 +277,7 @@ public class FuncUtil {
             return m;
         });
     }
+
 
     public static <R, E> Map groupIn(E[] arr, Func$1<Object[], E> keyMapper, Func$1<R, E> convertor) {
         return groupIn(arrayToIterable(arr), keyMapper, convertor);
