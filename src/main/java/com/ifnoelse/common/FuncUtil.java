@@ -38,8 +38,9 @@ public class FuncUtil {
     public interface Func$2<R, A, B> {
         public R todo(A a, B b);
     }
-    public interface Func$3<R, A, B,C> {
-        public R todo(A a, B b,C c);
+
+    public interface Func$3<R, A, B, C> {
+        public R todo(A a, B b, C c);
     }
 
     public static <R, E> R reduce(R init, Iterable<E> iterable, Func$2<R, R, E> func) {
@@ -77,8 +78,9 @@ public class FuncUtil {
 
     /**
      * 将嵌套集合中的所有元素放入一个list中返回
+     *
      * @param colls
-     * @param func 处理每个元素的方法，元素被放入list之间会调用该方法，并将返回值放入list
+     * @param func  处理每个元素的方法，元素被放入list之间会调用该方法，并将返回值放入list
      * @param <R>
      * @param <E>
      * @return
@@ -97,6 +99,7 @@ public class FuncUtil {
 
     /**
      * 生成嵌套集合的代理迭代器，通过该迭代器可以遍历嵌套集合中的所有元素
+     *
      * @param iterables
      * @param <E>
      * @return
@@ -205,6 +208,14 @@ public class FuncUtil {
 
     }
 
+    public static <E> Map<E, Integer> count(Iterable<E> iterable) {
+        return countBy(iterable, e -> e);
+    }
+
+    public static <E> Map<E, Integer> count(E[] arr) {
+        return countBy(arrayToIterable(arr), e -> e);
+    }
+
     public static <E> Map countIn(Iterable<E> iterable, Func$1<Object[], E> func) {
         return reduce(new HashMap(), iterable, (m, e) -> {
             Object[] keys = func.todo(e);
@@ -289,7 +300,6 @@ public class FuncUtil {
         });
     }
 
-
     public static <E> Map groupIn(E[] arr, Func$1<Object[], E> func) {
         return groupIn(arrayToIterable(arr), func);
     }
@@ -299,7 +309,6 @@ public class FuncUtil {
     }
 
     public static <R, E> Map<R, List<E>> groupBy(E[] arr, Func$1<R, E> keymapper) {
-
         return groupBy(arrayToIterable(arr), keymapper);
     }
 
