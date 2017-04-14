@@ -19,7 +19,7 @@ public class Conf {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         }
