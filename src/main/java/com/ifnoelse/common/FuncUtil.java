@@ -270,15 +270,19 @@ public class FuncUtil {
     }
 
     public static <R, E> Map groupIn(Iterable<E> iterable, Func$1<Object[], E> keyMapper, Func$1<R, E> convertor) {
+        return groupIn(iterable,new ArrayList<R>(),keyMapper,convertor);
+    }
+
+    public static <R, E> Map groupIn(Iterable<E> iterable,Collection<R> initColl, Func$1<Object[], E> keyMapper, Func$1<R, E> convertor) {
         return reduce(new HashMap(), iterable, (m, e) -> {
             Object[] keys = keyMapper.todo(e);
             Map pre = m;
             for (int i = 0; i < keys.length; i++) {
                 Object key = keys[i];
                 if (i == keys.length - 1) {
-                    List<R> list = (List<R>) pre.getOrDefault(key, new ArrayList<R>());
-                    list.add(convertor.todo(e));
-                    pre.put(key, list);
+                    Collection<R> coll = (Collection<R>) pre.getOrDefault(key, new ArrayList<R>());
+                    coll.add(convertor.todo(e));
+                    pre.put(key, coll);
                 } else {
                     Map cur = (Map) pre.getOrDefault(key, new HashMap<>());
                     pre.put(key, cur);
