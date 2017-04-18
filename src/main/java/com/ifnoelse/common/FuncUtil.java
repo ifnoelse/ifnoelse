@@ -280,7 +280,7 @@ public class FuncUtil {
             for (int i = 0; i < keys.length; i++) {
                 Object key = keys[i];
                 if (i == keys.length - 1) {
-                    Collection<R> coll = (Collection<R>) pre.getOrDefault(key, new ArrayList<R>());
+                    Collection<R> coll = (Collection<R>) pre.getOrDefault(key, initColl);
                     coll.add(convertor.todo(e));
                     pre.put(key, coll);
                 } else {
