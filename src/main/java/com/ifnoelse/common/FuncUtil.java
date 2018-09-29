@@ -79,11 +79,11 @@ public class FuncUtil {
     /**
      * 将嵌套集合中的所有元素放入一个list中返回
      *
-     * @param colls
+     * @param colls 集合
      * @param func  处理每个元素的方法，元素被放入list之间会调用该方法，并将返回值放入list
-     * @param <R>
-     * @param <E>
-     * @return
+     * @param <R> 返回值类型
+     * @param <E> 入参类型
+     * @return 返回列表
      */
     public static <R, E> List<R> flatMap(Collection colls, Func$1<R, E> func) {
         List<R> list = new ArrayList<>();
@@ -100,9 +100,9 @@ public class FuncUtil {
     /**
      * 生成嵌套集合的代理迭代器，通过该迭代器可以遍历嵌套集合中的所有元素
      *
-     * @param iterables
-     * @param <E>
-     * @return
+     * @param iterables 嵌套迭代器
+     * @param <E> 迭代器内的数据类型
+     * @return 返回展开之后的迭代器
      */
     public static <E> Iterable<E> flat(Iterable iterables) {
 

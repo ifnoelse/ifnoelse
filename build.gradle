@@ -1,11 +1,50 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 
 version = '1.0'
 
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
 repositories {
     mavenCentral()
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task docJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'docs'
+    from javadoc.destinationDir
+}
+
+//noinspection GroovyAssignabilityCheck
+task createPom << {
+    pom {
+        //noinspection GroovyAssignabilityCheck
+        project {
+            groupId 'com.ifnoelse'
+            artifactId 'ifnoelse'
+            version '1.0.0'
+            inceptionYear '2018'
+            licenses {
+                license {
+                    //noinspection GroovyAssignabilityCheck
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("$buildDir/pom.xml")
+}
+
+artifacts {
+    archives sourcesJar
+    archives docJar
 }
 
 dependencies {
