@@ -1,9 +1,11 @@
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+group 'com.ifnoelse'
+version '1.0'
 
 sourceCompatibility = 1.8
-
-version = '1.0'
 
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
@@ -12,39 +14,55 @@ repositories {
 }
 
 task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
     classifier = 'sources'
-    from sourceSets.main.allSource
 }
 
-task docJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'docs'
-    from javadoc.destinationDir
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
 }
 
-//noinspection GroovyAssignabilityCheck
-task createPom << {
-    pom {
-        //noinspection GroovyAssignabilityCheck
-        project {
-            groupId 'com.ifnoelse'
-            artifactId 'ifnoelse'
-            version '1.0.0'
-            inceptionYear '2018'
-            licenses {
-                license {
-                    //noinspection GroovyAssignabilityCheck
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'ifnoelse'
+                description = 'util collections'
+                url = 'https://github.com/ifnoelse/ifnoelse'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'ifnoelse'
+                        name = 'ifnoelse'
+                        email = 'ifnoelse@qq.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/ifnoelse/ifnoelse.git'
+                    developerConnection = 'scm:git:https://github.com/ifnoelse/ifnoelse.git'
+                    url = 'https://github.com/ifnoelse/ifnoelse'
                 }
             }
         }
-    }.writeTo("$buildDir/pom.xml")
+    }
+    repositories {
+        maven {
+            url = './maven'
+        }
+    }
 }
 
-artifacts {
-    archives sourcesJar
-    archives docJar
+signing {
+    sign publishing.publications.mavenJava
 }
 
 dependencies {
