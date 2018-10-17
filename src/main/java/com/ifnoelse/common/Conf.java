@@ -1,27 +1,20 @@
 package com.ifnoelse.common;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class Conf {
     private static Properties p = null;
 
     static {
-        p = new Properties();
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(Conf.class.getClassLoader().getResourceAsStream("conf.properties"), "utf-8");
+        try (InputStream in = Conf.class.getClassLoader().getResourceAsStream("uncia.properties");
+             Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
             p.load(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+        } catch (NullPointerException e) {
+            throw new RuntimeException("找不到配置文件：uncia.properties");
         }
     }
 
